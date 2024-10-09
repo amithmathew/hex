@@ -372,6 +372,9 @@ export function activate(context: vscode.ExtensionContext) {
                     return;
                 }
 
+            // Update the hexModifyCodeSessionContext with the latest value in the modified editor.
+            hexModifyCodeSessionContext.modifiedCode = hexModifyCodeSessionContext.modifiedCodeDoc?.getText()!;
+
             // Get the full line that includes the start of the original range.
             const originalFullStartLine = hexModifyCodeSessionContext
                                             .originalEditor.document

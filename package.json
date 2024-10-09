@@ -6,6 +6,7 @@
   "engines": {
     "vscode": "^1.89.0"
   },
+  "license": "SEE LICENSE IN LICENSE",
   "categories": [
     "Programming Languages",
     "Snippets",
@@ -15,6 +16,19 @@
     "Chat",
     "Education"
   ],
+  "keywords": [
+    "ai",
+    "llm",
+    "code assistant",
+    "pair programmer",
+    "chatgpt",
+    "gemini"
+  ],
+  "pricing": "Free",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amithmathew/hex"
+  },
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {

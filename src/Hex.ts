@@ -78,21 +78,6 @@ export class Hex {
         const tool_choice = {"type": "function", "function": {"name": "replace_code"}};
         //console.log(messages);
         const functionArgs = await this.llm.chatCompletion(messages, this.tools, tool_choice, signal);
-        //const response = await this.openai.chat.completions.create(
-        //    {
-        //        model: this.model,
-        //       messages: messages,
-        //        tools: this.tools,
-        //        tool_choice: {"type": "function", "function": {"name": "replace_code"}},
-        //    },
-        //    {
-        //        signal: signal,
-        //    }
-        //);
-        //console.log(response);
-        //console.log(response.choices[0].message.tool_calls[0].function.arguments);
-        //const functionArgs = JSON.parse(response.choices[0].message.tool_calls[0].function.arguments);
-        //console.log(functionArgs.comment);
         hexlogger.log("Received response.");
         return functionArgs.code;
     }
