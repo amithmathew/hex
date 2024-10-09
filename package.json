@@ -1,7 +1,7 @@
 {
   "name": "hex",
   "displayName": "Hex - Your Personal AI Pair Programmer.",
-  "description": "Your Personal AI Pair Programmer. Let AI help you code. You control everything.",
+  "description": "Your Personal AI Pair Programmer. Let AI help you code. You're always in control.",
   "version": "0.0.9",
   "engines": {
     "vscode": "^1.89.0"
