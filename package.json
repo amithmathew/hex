@@ -1,0 +1,168 @@
+{
+  "name": "hex",
+  "displayName": "Hex - Your Personal AI Pair Programmer.",
+  "description": "Your Personal AI Pair Programmer. Let AI help you code. You control everything.",
+  "version": "0.0.9",
+  "engines": {
+    "vscode": "^1.89.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "AI",
+    "Formatters",
+    "Machine Learning",
+    "Chat",
+    "Education"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "hex.changeApiKey",
+        "title": "Hex: Update API Key"
+      },
+      {
+        "command": "hex.modifyCode",
+        "title": "Hex: Modify Code",
+        "when": "!hexSuggDiffViewOpen"
+      },
+      {
+        "command": "hex.acceptSuggestion",
+        "title": "Hex: Accept Suggestion",
+        "icon": "$(check)",
+        "when": "hexSuggDiffViewOpen"
+      },
+      {
+        "command": "hex.modifyCode",
+        "title": "Hex: Finetune Suggestion",
+        "icon": "$(edit)",
+        "when": "hexSuggDiffViewOpen"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "hex.modifyCode",
+        "mac": "cmd+h",
+        "key": "ctrl-h",
+        "when": "!hexSuggDiffViewOpen",
+        "title": "Modify Code"
+      },
+      {
+        "command": "hex.modifyCode",
+        "mac": "cmd+h",
+        "key": "ctrl-h",
+        "when": "hexSuggDiffViewOpen",
+        "title": "Finetune Code"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "hex.modifyCode",
+          "when": "!hexSuggDiffViewOpen",
+          "title": "Modify Code"
+        },
+        {
+          "command": "hex.acceptSuggestion",
+          "when": "hexSuggDiffViewOpen",
+          "title": "Accept Suggestion"
+        },
+        {
+          "command": "hex.modifyCode",
+          "when": "hexSuggDiffViewOpen",
+          "title": "Finetune Code"
+        },
+        {
+          "command": "hex.changeApiKey"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "hex.modifyCode",
+          "when": "editorHasSelection && !hexSuggDiffViewOpen",
+          "group": "Hex@1",
+          "title": "Modify Code"
+        }
+      ],
+      "editor/title": [
+        {
+            "command": "hex.acceptSuggestion",
+            "group": "navigation@1",
+            "when": "hexSuggDiffViewOpen",
+            "title": "Accept Suggestion"
+        },
+        {
+          "command": "hex.modifyCode",
+          "group": "navigation@3",
+          "when": "hexSuggDiffViewOpen",
+          "title": "Finetune Code"
+      }
+    ]
+    },
+    "configuration": [
+      {
+        "id": "hex",
+        "title": "Hex - Personal AI Pair Programmer",
+        "properties": {
+          "hex.model": {
+            "order": 1,
+            "markdownDescription": "Specifies the model to use.",
+            "type": "string",
+            "default": "[OpenAI] gpt-4o-mini",
+            "enum": [
+              "[OpenAI] gpt-4o-mini",
+              "[OpenAI] gpt-4o",
+              "[OpenAI] gpt-4-turbo",
+              "[Google Cloud] gemini-1.5-flash-002",
+              "[Google Cloud] gemini-1.5-pro-002"
+            ]
+          },
+          "hex.GoogleCloudApiKey": {
+            "order": 2,
+            "markdownDescription": "Your Google Cloud API Key",
+            "type": "string"
+          },
+          "hex.OpenAIApiKey": {
+            "order": 3,
+            "markdownDescription": "Your OpenAI API Key",
+            "type": "string"
+          },
+          "hex.ModifyCodePrompt": {
+            "order": 12,
+            "markdownDescription": "System prompt for modifying code.",
+            "type": "string",
+            "editPresentation": "multilineText",
+            "default": "You are an expert software developer. Modify the code provided following these instructions.\n"
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@types/sql.js": "^1.4.9",
+    "@types/vscode": "^1.89.0",
+    "@typescript-eslint/eslint-plugin": "^7.7.1",
+    "@typescript-eslint/parser": "^7.7.1",
+    "@vscode/test-cli": "^0.0.8",
+    "@vscode/test-electron": "^2.3.9",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@vscode/vsce": "^2.26.1",
+    "openai": "^4.41.0",
+    "sql.js": "^1.10.3"
+  }
+}
