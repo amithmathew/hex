@@ -133,19 +133,21 @@
               "[OpenAI] gpt-4o-mini",
               "[OpenAI] gpt-4o",
               "[OpenAI] gpt-4-turbo",
-              "[Google Cloud] gemini-1.5-flash-002",
-              "[Google Cloud] gemini-1.5-pro-002"
+              "[Google for Developers] gemini-1.5-flash-002",
+              "[Google for Developers] gemini-1.5-pro-002"
             ]
           },
           "hex.GoogleCloudApiKey": {
             "order": 2,
-            "markdownDescription": "Your Google Cloud API Key",
-            "type": "string"
+            "markdownDescription": "Your Google for Developers API Key",
+            "type": "string",
+            "title": "Google for Developers API Key"
           },
           "hex.OpenAIApiKey": {
             "order": 3,
             "markdownDescription": "Your OpenAI API Key",
-            "type": "string"
+            "type": "string",
+            "title": "OpenAI API Key"
           },
           "hex.ModifyCodePrompt": {
             "order": 12,
