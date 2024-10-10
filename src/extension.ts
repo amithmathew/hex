@@ -111,7 +111,7 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		} else {
 			// Optionally handle the case where the original editor might have been closed or is no longer accessible
-			vscode.window.showInformationMessage("Hex: Original document is no longer open!");
+			hexlogger.log("Hex: Original document is no longer open!");
 		}
 		hexModifyCodeSessionContext = null;
         // Resetting the context variable.
