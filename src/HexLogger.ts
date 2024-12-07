@@ -17,7 +17,7 @@ export class HexLogger {
     public async log(logstring: string, loglevel="DEBUG") {
         this.outputChannel.append(logstring + '\n');
         if (this.writeToStdout === true) {
-            console.log('Hex: ' + logstring);
+            console.log('Hex: ', logstring);
         }
     }
 }

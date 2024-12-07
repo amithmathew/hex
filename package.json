@@ -106,18 +106,18 @@
       ],
       "editor/title": [
         {
-            "command": "hex.acceptSuggestion",
-            "group": "navigation@1",
-            "when": "hexSuggDiffViewOpen",
-            "title": "Accept Suggestion"
+          "command": "hex.acceptSuggestion",
+          "group": "navigation@1",
+          "when": "hexSuggDiffViewOpen",
+          "title": "Accept Suggestion"
         },
         {
           "command": "hex.modifyCode",
           "group": "navigation@3",
           "when": "hexSuggDiffViewOpen",
           "title": "Finetune Code"
-      }
-    ]
+        }
+      ]
     },
     "configuration": [
       {
@@ -143,7 +143,7 @@
             "type": "string",
             "title": "Google for Developers API Key"
           },
-          "hex.OpenAIApiKey": {
+          "hex.OpenaiApiKey": {
             "order": 3,
             "markdownDescription": "Your OpenAI API Key",
             "type": "string",
@@ -181,6 +181,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "@vscode/vsce": "^2.26.1",
     "openai": "^4.41.0",
     "sql.js": "^1.10.3"

@@ -1,30 +1,25 @@
 import * as vscode from 'vscode';
 import { hexlogger } from './extension';
+import { getVendorModelFromModelString } from './helpers';
 
 export class LLM {
-    private vendor: string;
-    private model: string;
+    public vendor: string;
+    public model: string;
     private config: vscode.WorkspaceConfiguration;
     private apiKey: string|undefined;
+    private tools: any;
     
     private openai: any;
-    private googlecloud: any;
+    private googleai: any;
 
     
 
     constructor(modelString: string) {
-        const { vendor, model } = this.getVendorModelFromModelString(modelString);
+        const { vendor, model } = getVendorModelFromModelString(modelString);
         this.vendor = vendor;
         this.model = model;
         this.config = vscode.workspace.getConfiguration('hex');
         vscode.window.showInformationMessage(`Using ${vendor} model ${model}`);
-    }
-
-    private getVendorModelFromModelString(modelString: string): { vendor: string, model: string } {
-        // split the model name at the first space and return the vendor part
-        const vendor = modelString.match(/^\[(.*?)\]/)?.[1] ?? ''; // extract vendor or fallback to empty string
-        const model = modelString.replace(/^\[.*?\]\s*/, ''); // remove vendor part
-        return { vendor, model };
     }
 
     private async loadAndInitSDK(vendor: string): Promise<any> {
@@ -33,13 +28,17 @@ export class LLM {
         switch (vendor) {
             case 'OpenAI':
                 sdk = await import('openai'); // dynamically import the OpenAI SDK
-                this.apiKey = this.config.get<string>('OpenAIApiKey') ?? 
+                this.apiKey = this.config.get<string>('OpenaiApiKey') ?? 
                     ( () => { throw new Error('OpenAI model selected but API Key is not defined.'); })();
                 this.openai = new sdk.OpenAI({apiKey: this.apiKey});
                 break;
-            //case 'Google':
-            //    sdk = await import('@google-cloud/ai-platform'); // dynamically import Google AI SDK
-            //    break;
+            case 'Google for Developers':
+                sdk = await import('@google/generative-ai'); // dynamically import Google AI SDK
+                this.apiKey = this.config.get<string>('GoogleCloudApiKey') ??
+                    ( () => { throw new Error('Google AI for Developers model selected by API Key is not defined.'); }) ();
+                let genAI = new sdk.GoogleGenerativeAI(this.apiKey);
+                this.googleai = genAI.getGenerativeModel({model: this.model, tools: this.tools.Google});
+                break;
             default:
                 hexlogger.log(`Unsupported vendor: ${vendor}`);
                 vscode.window.showErrorMessage(`Unsupported vendor: ${vendor}`);
@@ -47,21 +46,53 @@ export class LLM {
         }
     }
 
-    public async initialize() {
+    public async initialize(tools: any) {
+        this.tools = tools;
         await this.loadAndInitSDK(this.vendor);
     }
 
-    public async chatCompletion(messages: [any], tools: [any], tool_choice: any, signal: AbortSignal, llm_options: Record<string, any> ) {
+    private buildMessages(messages: any) {
+        var vendor_messages;
+        switch (this.vendor) {
+            case 'OpenAI':
+                vendor_messages = messages.map((message: { role: any; content: any; }) => ({
+                    role: message.role,
+                    content: Array.isArray(message.content) ? message.content.map(c => ({
+                        type: c.type,
+                        [c.type]: c.data
+                    })) : message.content
+                }));
+                hexlogger.log("OpenAI Messages: ");
+                hexlogger.log(vendor_messages);
+                return vendor_messages
+            case 'Google for Developers':
+                vendor_messages = messages.map((message: { user: any; content: any; }) => ({
+                    role: message.user,
+                    parts: Array.isArray(message.content) ? message.content.map(c => ({
+                        text: c.text
+                    })) : message.content
+                }));
+                hexlogger.log("Google for Developers Messages: ");
+                hexlogger.log(vendor_messages);
+            default:
+                hexlogger.log(`Unknown vendor ${this.vendor}. Cannot reformat messages.`);
+                throw new Error(`Unsupported vendor: ${this.vendor}`);
+        }
+    }
+
+    public async chatCompletion(messages: [any], signal: AbortSignal, llm_options: Record<string, any> ) {
         try {
+            let response;
+            let vendor_messages = this.buildMessages(messages);
             switch (this.vendor) {
                 case 'OpenAI':
-                    const response = await this.openai.chat.completions.create(
+                    response = await this.openai.chat.completions.create(
                         {
                             model: this.model,
-                            messages: messages,
-                            tools: tools,
+                            messages: vendor_messages,
+                            tools: this.tools.OpenAI,
                             //tool_choice: {"type": "function", "function": {"name": "replace_code"}},
-                            tool_choice: tool_choice,
+                            tool_choice: "required",
                             ...llm_options
                         },
                         {
@@ -75,6 +106,22 @@ export class LLM {
                         return functionArgs;
                     }
                     return response;
+                case 'Google for Developers':
+                    response = await this.googleai.generateContent(
+                        {
+                            contents: vendor_messages,
+                            tools: this.tools.Google,
+                            tool_config: {
+                                function_calling_config: {
+                                    mode: 'ANY',
+                                    allowed_function_names: this.tools.Google.functionDeclarations.map((declaration: { name: any; }) => declaration.name)// Extracting the names under Google as a list       
+                                }
+                            }
+
+                        }
+                    );
+                    hexlogger.log("RECEIVED GOOG RESPONSE");
+                    hexlogger.log(response);
                 default:
                     vscode.window.showErrorMessage(`Unsupported vendor: ${this.vendor}`);
                     throw new Error(`Unsupported vendor: ${this.vendor}`);

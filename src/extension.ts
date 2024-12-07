@@ -224,7 +224,9 @@ export function activate(context: vscode.ExtensionContext) {
                         statusBarItem.command = 'hex.abort';
                         statusBarItem.show();
                         try {
+                            // The money
                             suggestedText = await hex.modifyCode({ signal }, prompt, modifiedText!, hexModifyCodeSessionContext!.originalCode);
+                            
                             statusBarItem.text = "$(check) Hex is done.";
                             statusBarItem.tooltip = "Operation completed.";
                             statusBarItem.backgroundColor = undefined;
