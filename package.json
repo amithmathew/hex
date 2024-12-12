@@ -2,7 +2,7 @@
   "name": "hex",
   "displayName": "Hex - Your Personal AI Pair Programmer.",
   "description": "Your Personal AI Pair Programmer. Let AI help you code. You're always in control.",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "author": {
     "name": "Amith Mathew",
     "email": "hex@amithm.ca"
@@ -137,7 +137,7 @@
               "[Google for Developers] gemini-1.5-pro-002"
             ]
           },
-          "hex.GoogleCloudApiKey": {
+          "hex.GoogleDevApiKey": {
             "order": 2,
             "markdownDescription": "Your Google for Developers API Key",
             "type": "string",
@@ -154,7 +154,7 @@
             "markdownDescription": "System prompt for modifying code.",
             "type": "string",
             "editPresentation": "multilineText",
-            "default": "You are an expert software developer. Modify the code provided following these instructions.\n"
+            "default": "You are an expert software developer. Modify the code provided following these instructions. Your response will be pasted directly into the code file. Do not wrap your response in any sort of commentary or markdown code blocks, as that will break the code file.\n"
           }
         }
       }
@@ -178,12 +178,13 @@
     "@vscode/test-cli": "^0.0.8",
     "@vscode/test-electron": "^2.3.9",
     "eslint": "^8.57.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.7.2"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
     "@vscode/vsce": "^2.26.1",
     "openai": "^4.41.0",
-    "sql.js": "^1.10.3"
+    "sql.js": "^1.10.3",
+    "zod": "^3.23.8"
   }
 }

@@ -10,14 +10,13 @@ With Hex, you are completely in control. You can use the free tier with the Goog
 
 ## Supported LLMs
 
-#### Google (Coming soon)
+#### Google
 - Gemini 1.5 Flash
 - Gemini 1.5 Pro
 
 #### OpenAI
 - GPT-4o-mini
 - GPT-4o
-- GPT-4 Turbo
 
 ## Benefits:
 Using Hex makes your development workflow smoother and helps you save time while cutting down on errors - whether you're kicking off a new project, trying to get upto speed and understand a large codebase, or working on new features on an existing project.

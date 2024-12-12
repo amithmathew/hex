@@ -128,7 +128,7 @@ export function activate(context: vscode.ExtensionContext) {
 			    return;
             }
             if (hexDiffIsClosing) {
-                console.log("Hex: Avoiding recursive event handling. Hex Diff is closing!");
+                hexlogger.log("Hex: Avoiding recursive event handling. Hex Diff is closing!");
                 return;
             }
             hexlogger.log("Hex: Visible tabs have changed, checking hex diff tab was closed.");

@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import { hexlogger } from './extension';
-import { LLM } from './LLM';
 import { getVendorModelFromModelString } from './helpers';
 
 interface ModifyCodeOptions {
@@ -12,47 +11,6 @@ export class Hex {
     private llm: any;
     private vendor: string;
     private model: string;
-
-    private tools = {
-        OpenAI :
-            [
-                {
-                    type: "function",
-                    function: {
-                        name: "replace_code",
-                        description: "Replaces existing code block with the code passed to this function.",
-                        parameters: {
-                            type: "object",
-                            properties: {
-                                code: {
-                                    type: "string",
-                                    description: "The code to be inserted verbatim. Does not accept markdown code fences."
-                                }
-                            },
-                            required: ["code"],
-                        }
-                    }
-                },
-            ],
-        Google : {
-            functionDeclarations: [
-                {
-                    name: "replace_code",
-                    parameters: {
-                        type: "object",
-                        description: "Replaces existing code block with the code passed to this function.",
-                        properties: {
-                            code: {
-                                type: "string",
-                                description: "The code to be inserted verbatim. Does not accept markdown code fences."
-                            }
-                        },
-                        required: ["code"]
-                    }
-                }
-            ]
-        }
-    };
         
 
     private modifyCodePrompt: string;
@@ -65,22 +23,34 @@ export class Hex {
             vscode.window.showErrorMessage("Model not set in extension settings!");
             throw new Error("Model not set in extension settings. Cannot initialize Hex.");
         } else {
-            this.llm = new LLM(modelString);
             const { vendor, model } = getVendorModelFromModelString(modelString);
             this.vendor = vendor;
             this.model = model;
         }
-
         let mp = vscode.workspace.getConfiguration('hex').get<string>('ModifyCodePrompt');
         if (!mp) {
-            this.modifyCodePrompt = "You are an expert software developer. Modify the code provided following these instructions.";
+            this.modifyCodePrompt = "You are an expert software developer. Modify the code provided following these instructions. Your response will be pasted directly into the code file. Do not wrap your response in any sort of commentary or markdown code blocks, as that will break the code file.\n";
         } else {
             this.modifyCodePrompt = mp;
         }
     }
 
     public async initialize() {
-        await this.llm.initialize(this.tools);
+        let llmplugin;
+        switch (this.vendor) {
+            case 'OpenAI':
+                llmplugin = await import('./llm/HexOpenAI.js');
+                this.llm = new llmplugin.HexOpenAI();
+                await this.llm.initialize(this.vendor, this.model);
+                break;
+            case 'Google for Developers':
+                llmplugin = await import('./llm/HexGoogleDevGemini.js');
+                this.llm = new llmplugin.HexGoogleDevGemini();
+                await this.llm.initialize(this.vendor, this.model);
+                break;
+            default:
+                throw new Error('Unsupported LLM vendor ' + this.vendor);
+        }
     }
 
     public async modifyCode(options: ModifyCodeOptions, prompt: string, code: string, original_code?: string) {
@@ -91,33 +61,44 @@ export class Hex {
             throw new Error('request aborted'); // or handle it in another way
         }
 
+        // The messages object is complicated because
+        // we want to support multimodal input in the future.
         const messages = 
             original_code ? 
-            [{   role: "user", 
-                content: [
-                    {   type: "text",
-                        data: this.modifyCodePrompt.concat(
-                                "\n", 
-                                prompt, 
-                                "\n\noriginal code for context:\n", 
-                                original_code, 
-                                "\n\npreviously modified code to be changed now:\n", 
-                                code)
+                [
+                    {   role: "user", 
+                        content: [
+                            {   type: "text",
+                                data: this.modifyCodePrompt.concat(
+                                        "\n", prompt, 
+                                        "\n\noriginal code for context:\n", original_code, 
+                                        "\n\npreviously modified code to be changed now:\n", 
+                                        code)
+                            },
+                        ] 
                     }
-                ] 
-            }]
-            : [{ 
-                role: "user", 
-                content: [this.modifyCodePrompt.concat("\n", prompt, "\n\ncode:\n", code)]
-            },];
+                ]
+            : 
+                [
+                    { 
+                        role: "user", 
+                        content: [
+                            {
+                                type: "text",
+                                data: this.modifyCodePrompt.concat("\n", prompt, "\n\ncode:\n", code)
+                            },
+                        ]
+                    },
+            ];
         hexlogger.log("Making LLM call.");
-        console.log(messages);
+        //console.log(messages);
 
         //const tool_choice = {"type": "function", "function": {"name": "replace_code"}};
         //console.log(messages);
-        const functionArgs = await this.llm.chatCompletion(messages, signal);
+        const modifiedCode = await this.llm.modifyCode(messages, signal);
         hexlogger.log("Received response.");
-        return functionArgs.code;
+        hexlogger.log(modifiedCode);
+        return modifiedCode;
     }
 
 }
