@@ -1,9 +1,10 @@
 {
   "name": "hex",
-  "displayName": "Hex - Your Personal AI Pair Programmer.",
+  "displayName": "Hex.ai - Your Personal AI Pair Programmer",
   "publisher": "HeliosInc",
   "description": "Your Personal AI Pair Programmer. Let AI help you code. You're always in control.",
-  "version": "0.1.0",
+  "icon": "images/helioslogo.png",
+  "version": "0.1.1",
   "author": {
     "name": "Amith Mathew",
     "email": "helios@amithm.ca"

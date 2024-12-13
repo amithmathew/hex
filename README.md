@@ -1,9 +1,9 @@
-# Hex - Your Personal AI Pair Programmer
+# Hex.ai - Your Personal AI Pair Programmer
 
 Hex is a powerful extension that puts an AI Assistant of your choice right in your IDE. Hex can be configured to use many of the popular large language models available from vendors like OpenAI, Google and Anthropic. Hex is primarily meant for developers, allowing creation, modification and optimization of code with ease. However, Hex puts you in control, allowing you to customize the assistant to perform almost any language based workflow.
   
   
-![Hex in Action](hex.gif)
+![Hex in Action](images/hex.gif)
   
   
 With Hex, you are completely in control. You can use the free tier with the Google Gemini models, or pay based on usage for Gemini and OpenAI GPT models.
@@ -23,17 +23,12 @@ Using Hex makes your development workflow smoother and helps you save time while
 
 
 ## Installation and Setup
-We are working on publishing this extension on the Visual Studio Code Marketplace. Until then, you can install the latest version of this extension by downloading the latest `VSIX` file in the directory `released_vsix`.
-To install the `VSIX` file, open the Extensions View in the side panel, click on the command dropdown and select the option "Install from VSIX...".
-  
-
-![Install from VSIX](hex-install-from-vsix.png)
-  
+Install this extension from the extensions tab in VS Code (Search for "Hex.ai"). The VS Code Marketplace page for this extension is [here](https://marketplace.visualstudio.com/items?itemName=HeliosInc.hex). 
 
 Once installed, you need to setup atleast one vendor API key before you can start using Hex. Open "Preferences: Open User Settings" from the VSCode command pallete, expand the Extension section on the side pane, and scroll down to the entry for Hex and click on it.
   
 
-![Hex Settings](hex-settings.png)
+![Hex Settings](images/hex-settings.png)
   
 
 You can now choose the model you want to use. Make sure that you provide the appropriate vendor's API Key.
